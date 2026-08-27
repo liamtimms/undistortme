@@ -130,18 +130,18 @@ sub-{ID}/ses-{session}/run-{N}_desc-{name}/
 └── ...
 ```
 
-- Volumes are **uncompressed** `.nii`, one 3D file per volume (`dcm2niix -z 3`
+- Volumes are uncompressed `.nii`, one 3D file per volume (`dcm2niix -z 3`
   output); `.nii.gz` is not read. Volumes are numbered `_1`…`_N`, zero-padded
   to the width of N (`_1.nii` for 4 volumes, `_01.nii` for 22).
 - Sidecars must carry `EchoNumber`, `EchoTime`, `PhaseEncodingDirection`, and
   `TotalReadoutTime` (standard dcm2niix output). A missing `EchoNumber`
   makes every volume look like echo 1 and the run is skipped.
-- Runs need ≥ 2 echoes with **strictly alternating phase encoding**, echo 1
+- Runs need ≥ 2 echoes with **alternating phase encoding**, echo 1
   assumed positive-blip: the blip sign is derived from echo parity, and the
-  `+`/`-` in the sidecar's `PhaseEncodingDirection` is not consulted (only
+  `+`/`-` in the sidecar's `PhaseEncodingDirection` sign is not consulted because it is unreliable (only
   the axis is).
 - Optional `.bval` files (same stem as the sidecar, one value per volume)
-  trigger the diffusion path: TOPUP is fit on volumes with b ≤ `--cutoff`,
+  trigger the diffusion-specific path: TOPUP is fit on volumes with b ≤ `--cutoff`,
   and each higher-b volume is corrected with the field of the low-b volume
   most similar to it (by normalized mutual information).
 
