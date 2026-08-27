@@ -31,7 +31,7 @@ ENV PATH=/opt/conda/bin:$PATH \
 
 # slicenii + combinenii prebuilt release binaries (Rust, by the same author)
 USER root
-ADD https://github.com/liamtimms/slicenii/releases/download/0.2.0/linux-gnu.zip /tmp/slicenii.zip
+ADD https://github.com/liamtimms/slicenii/releases/download/0.2.2/linux-gnu.zip /tmp/slicenii.zip
 RUN apt-get update && apt-get install -y --no-install-recommends unzip \
     && unzip -o /tmp/slicenii.zip -d /tmp/slicenii \
     && install -m 0755 $(find /tmp/slicenii -type f -name 'slicenii') /usr/local/bin/slicenii \
