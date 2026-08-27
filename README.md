@@ -10,23 +10,22 @@ parallelizes across b-volumes/averages and — with `-s` — across individual
 slices. Echoes 1 & 3 can be contrast-matched to echo 2 before field
 estimation.
 
-If you use this tool, please cite TOPUP:
+If you use this tool, please cite:
 
-Andersson, Jesper L. R., Stefan Skare, and John Ashburner. “How to Correct Susceptibility Distortions in Spin-Echo Echo-Planar Images: Application to Diffusion Tensor Imaging.” NeuroImage 20, no. 2 (2003): 870–88. https://doi.org/10.1016/S1053-8119(03)00336-7.
-
-And:
+Coll‐Font, J., Afacan, O., Hoge, S., Garg, H., Shashi, K., Marami, B., Gholipour, A., Chow, J., Warfield, S. and Kurugol, S., 2021. Retrospective distortion and motion correction for free‐breathing DW‐MRI of the kidneys using dual‐echo EPI and slice‐to‐volume registration. Journal of Magnetic Resonance Imaging, 53(5), pp.1432-1443.
 
 Utkur, Mustafa, Liam Timms, Sila Kurugol, and Onur Afacan. “Ultrafast and Robust T2 Mapping Using Optimized Single‐shot Multi‐echo Planar Imaging with Alternating Blips.” Magnetic Resonance in Medicine, April 28, 2025, mrm.30516. https://doi.org/10.1002/mrm.30516.
 
 Timms, Liam, Mustafa Utkur, Cemre Ariyurek, Miriam Hewlett, Sila Kurugol, and Onur Afacan. “Fast, Robust T2 ‐ IVIM Quantitative MRI With Distortion and Motion‐Corrected Multi‐Echo EPI.” Magnetic Resonance in Medicine 95, no. 5 (2026): 2527–37. https://doi.org/10.1002/mrm.70256.
+
+Underlying libraries and tools leveraged here, notably TOPUP, have their own liscensing and citations. Please see associated documentation.
 
 ## Quickstart with Docker
 
 The image bundles Python, FSL's TOPUP components, dcm2niix, and slicenii —
 you need only Docker.
 
-```bash
-# prebuilt image (published for releases v0.1.0 and later)
+```bash # prebuilt image (published for releases v0.1.0 and later)
 docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/data \
     ghcr.io/liamtimms/undistortme -i /data/sourcedata -o /data -d -t
 
@@ -68,7 +67,7 @@ Plus, on your `PATH`:
 - **dcm2niix** — only if converting DICOMs (`-d`)
 - **[slicenii](https://github.com/liamtimms/slicenii)** (`slicenii`,
   `combinenii`) — only for slice-by-slice mode (`-s`).
-  
+
 The TOPUP configs in `configs/` are not installed with the package — get
 them from this repository (in the Docker image they are at
 `/src/undistortme/configs/`).
@@ -212,7 +211,7 @@ python -m pytest tests/                                 # no FSL needed
 python -m pytest tests/test_smoke_fsl.py -m "slow or needs_fsl"  # real FSL phantom
 ```
 
-The default suite pins every generated command as golden snapshots and
+The default suite pins every generated command as snapshots and
 executes no external binaries. The smoke tests **skip** if FSL (or, for the
 slice-mode smoke, slicenii) is not found; set `UNDISTORTME_REQUIRE_FSL=1` to
 turn those skips into failures (CI does this before publishing images).
