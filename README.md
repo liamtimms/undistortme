@@ -67,10 +67,8 @@ Plus, on your `PATH`:
   recommended (earlier versions lack or mishandle TOPUP multithreading)
 - **dcm2niix** — only if converting DICOMs (`-d`)
 - **[slicenii](https://github.com/liamtimms/slicenii)** (`slicenii`,
-  `combinenii`) — only for slice-by-slice mode (`-s`). Needs a version
-  **newer than 0.2.0** (its `combinenii` cannot recombine this pipeline's
-  per-slice outputs); build from source until a newer release is published
-
+  `combinenii`) — only for slice-by-slice mode (`-s`).
+  
 The TOPUP configs in `configs/` are not installed with the package — get
 them from this repository (in the Docker image they are at
 `/src/undistortme/configs/`).
