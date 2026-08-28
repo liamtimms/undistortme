@@ -6,19 +6,23 @@ DICOMs (or an already-converted BIDS-like NIfTI tree), estimates the
 distortion field from the alternating phase-encoding of the echoes, and
 applies the correction to each echo separately (preserving per-echo intensity
 across T2 decay). Runs are processed one at a time; within a run it
-parallelizes across b-volumes/averages and — with `-s` — across individual
+parallelizes across b-volumes/averages and with `-s` across individual
 slices. Echoes 1 & 3 can be contrast-matched to echo 2 before field
 estimation.
 
-If you use this tool, please cite:
+Relevant papers using this codebase:
 
-Coll‐Font, J., Afacan, O., Hoge, S., Garg, H., Shashi, K., Marami, B., Gholipour, A., Chow, J., Warfield, S. and Kurugol, S., 2021. Retrospective distortion and motion correction for free‐breathing DW‐MRI of the kidneys using dual‐echo EPI and slice‐to‐volume registration. Journal of Magnetic Resonance Imaging, 53(5), pp.1432-1443.
+1. Utkur, Mustafa, Liam Timms, Sila Kurugol, and Onur Afacan. “Ultrafast and Robust T2 Mapping Using Optimized Single‐shot Multi‐echo Planar Imaging with Alternating Blips.” Magnetic Resonance in Medicine, April 28, 2025, mrm.30516. https://doi.org/10.1002/mrm.30516.
+2. Timms, Liam, Mustafa Utkur, Cemre Ariyurek, Miriam Hewlett, Sila Kurugol, and Onur Afacan. “Fast, Robust T2 ‐ IVIM Quantitative MRI With Distortion and Motion‐Corrected Multi‐Echo EPI.” Magnetic Resonance in Medicine 95, no. 5 (2026): 2527–37. https://doi.org/10.1002/mrm.70256.
 
-Utkur, Mustafa, Liam Timms, Sila Kurugol, and Onur Afacan. “Ultrafast and Robust T2 Mapping Using Optimized Single‐shot Multi‐echo Planar Imaging with Alternating Blips.” Magnetic Resonance in Medicine, April 28, 2025, mrm.30516. https://doi.org/10.1002/mrm.30516.
+papers using earlier two echo scripts:
 
-Timms, Liam, Mustafa Utkur, Cemre Ariyurek, Miriam Hewlett, Sila Kurugol, and Onur Afacan. “Fast, Robust T2 ‐ IVIM Quantitative MRI With Distortion and Motion‐Corrected Multi‐Echo EPI.” Magnetic Resonance in Medicine 95, no. 5 (2026): 2527–37. https://doi.org/10.1002/mrm.70256.
+3. Coll‐Font, J., Afacan, O., Hoge, S., Garg, H., Shashi, K., Marami, B., Gholipour, A., Chow, J., Warfield, S. and Kurugol, S., 2021. Retrospective distortion and motion correction for free‐breathing DW‐MRI of the kidneys using dual‐echo EPI and slice‐to‐volume registration. Journal of Magnetic Resonance Imaging, 53(5), pp.1432-1443.
+4. Afacan, Onur, W. Scott Hoge, Tess E. Wallace, Ali Gholipour, Sila Kurugol, and Simon K. Warfield. 2020. “Simultaneous Motion and Distortion Correction Using Dual‐Echo Diffusion‐Weighted MRI.” Journal of Neuroimaging 30 (3): 276–85. https://doi.org/10.1111/jon.12708.
 
-Underlying libraries and tools leveraged here, notably TOPUP, have their own liscensing and citations. Please see associated documentation.
+Please cite the relevant work when using this in your research.
+
+Underlying libraries and tools leveraged here, notably TOPUP, have their own liscensing and citations. Please see their associated documentation.
 
 ## Quickstart with Docker
 
@@ -171,7 +175,7 @@ sub-{ID}/ses-{session}/run-{N}_desc-{name}/
 ```
 
 - Volumes are uncompressed `.nii`, one 3D file per volume (`dcm2niix -z 3`
-  output); `.nii.gz` is not read. Volumes are numbered `_1`…`_N`, zero-padded
+  output). Volumes are numbered `_1`…`_N`, zero-padded
   to the width of N (`_1.nii` for 4 volumes, `_01.nii` for 22).
 - Sidecars must carry `EchoNumber`, `EchoTime`, `PhaseEncodingDirection`, and
   `TotalReadoutTime` (standard dcm2niix output). A missing `EchoNumber`
@@ -243,7 +247,7 @@ for slice-by-slice mode use `configs/perslice_1.cnf`.
   the same machine are bit-reproducible. For bit-identical results across
   machines, pin `--jobs` and `--oversubscribe`.
 
-## Testing
+## Developer Testing
 
 ```bash
 git clone https://github.com/liamtimms/undistortme && cd undistortme
