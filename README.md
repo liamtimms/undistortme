@@ -52,6 +52,47 @@ release, build locally as shown above.
 > Oxford University Innovation. `undistortme` itself is MIT;
 > [dcm2niix](https://github.com/rordenlab/dcm2niix) is BSD.
 
+## test with the bundled example data
+
+`examples/` ships a minimal 4-echo phantom acquisition (Siemens Prisma, one
+b = 0 and one b = 1000 volume per echo, 128×128×10 at 1.72×1.72×7.5 mm,
+~2.6 MB) already in this pipeline's input layout, plus reference corrected
+outputs.
+
+![Example correction: 4 echoes before and after](docs/example-correction.png)
+
+To test your setup:
+
+```bash
+# 1. whole-volume correction (pervol.cnf = FSL's default config with
+#    TOPUP's motion estimation turned off, as it should be for volumes
+#    acquired together):
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/examples":/data \
+    undistortme -o /data -t -c /src/undistortme/configs/pervol.cnf \
+    --derivdir /data/derivatives
+
+# 2. slice-wise + contrast-matched correction (per-slice TOPUP config):
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/examples":/data \
+    undistortme -o /data -t -s -m -c /src/undistortme/configs/perslice_1.cnf \
+    --derivdir /data/derivatives
+
+# compare both against the bundled references (PASS/FAIL per volume):
+python3 examples/verify_example.py                      # needs numpy + nibabel
+# ...or, without any local python environment:
+docker run --rm -v "$PWD/examples":/data --entrypoint python undistortme \
+    /data/verify_example.py /data/derivatives
+```
+
+For a native install (needs FSL, and slicenii for step 2) the same test is:
+
+```bash
+undistortme -o examples -t -c configs/pervol.cnf \
+    --derivdir examples/derivatives
+undistortme -o examples -t -s -m -c configs/perslice_1.cnf \
+    --derivdir examples/derivatives
+python3 examples/verify_example.py
+```
+
 ## Native install
 
 Requires Python ≥ 3.10 (CI tests 3.10 / 3.12 / 3.14).
