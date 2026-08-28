@@ -731,6 +731,8 @@ def run_topup(
             )
 
             # apply topup to the orignal images
+            # per-slice corrected files are combinenii intermediates and stay
+            # in the work tree; whole-volume outputs are final products
             (apply_command_list, corrected_file_list) = get_applytopup_command(
                 subject,
                 session,
@@ -738,7 +740,8 @@ def run_topup(
                 bvol_num,
                 slice_num,
                 str(acq_file.absolute()),
-                dir_dict["topup_dir"],
+                dir_dict["work_dir"]
+                if check_dict["slice"] else dir_dict["topup_dir"],
                 topup_base,
                 original_file_list,
                 echo_list,
@@ -971,7 +974,8 @@ def run_topup_diffusion_special(
                 bvol_num,
                 slice_num,
                 str(acq_file.absolute()),
-                dir_dict["topup_dir"],
+                dir_dict["work_dir"]
+                if check_dict["slice"] else dir_dict["topup_dir"],
                 topup_base,
                 original_file_list,
                 echo_list,
@@ -995,7 +999,8 @@ def run_topup_diffusion_special(
                         high_bvol_num,
                         slice_num,
                         str(acq_file.absolute()),
-                        dir_dict["topup_dir"],
+                        dir_dict["work_dir"]
+                        if check_dict["slice"] else dir_dict["topup_dir"],
                         topup_base,
                         highb_nii_list,
                         highb_echo_list,
@@ -1262,11 +1267,12 @@ def handle_slicing(run_df: pd.DataFrame, dir_dict: dict) -> pd.DataFrame:
 
 def handle_combining(
     run_df: pd.DataFrame,
-    output_dir: str,
+    slices_dir: str,
+    out_dir: str,
     inner_dir: str,
     corr: str,
 ) -> pd.DataFrame:
-    """Combine the slices back into volumes."""
+    """Combine the corrected slices in ``slices_dir`` into volumes in ``out_dir``."""
 
     curr_df = run_df[run_df["volume_type"] == "volume"]
     original_niis = curr_df["nii"].unique()
@@ -1285,12 +1291,12 @@ def handle_combining(
         start_string = (f"{subject}_{session}_{run}_bv-{bvol_num}_" +
                         f"desc-{corr}-{inner_dir}_echo-{echo_num}_sv-")
         output_filename = os.path.join(
-            output_dir,
+            out_dir,
             f"{subject}_{session}_{run}_bv-{bvol_num}_desc-{corr}" +
             f"-recombined-volume_echo-{echo_num}.nii",
         )
         combine_cmd_list.append(
-            get_combinenii_cmd(output_dir, nii, start_string, output_filename))
+            get_combinenii_cmd(slices_dir, nii, start_string, output_filename))
         nii_df["combined_nii"] = output_filename
         combined_df_list.append(nii_df)
 
@@ -1564,7 +1570,8 @@ def process_run(
         if check_dict["slice"]:
             # combine slices back into volumes
             curr_df = run_df[run_df["volume_type"] == "volume"]
-            run_df = handle_combining(run_df, dir_dict["topup_dir"],
+            run_df = handle_combining(run_df, dir_dict["work_dir"],
+                                      dir_dict["topup_dir"],
                                       dir_dict["inner_dir"], "undistorted")
 
     # if check_dict["t2"]:
